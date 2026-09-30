@@ -1,0 +1,6 @@
+{
+  "name": "Liivrr Business Development & Marketing Monetization Deck",
+  "description": "Interactive business development, marketing, and monetization strategy presentation deck for Liivrr.",
+  "requestor": "user@example.com",
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
