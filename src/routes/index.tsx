@@ -203,7 +203,8 @@ function Presentation() {
     return () => window.removeEventListener("keydown", onKey);
   }, [go, slide]);
 
-  const Slide = slides[slide];
+  const Slide = slides[slide] ?? slides[0];
+  if (!Slide) return null;
   return (
     <div className="deck-shell" onTouchStart={(event) => { startX.current = event.touches[0]?.clientX ?? null; }} onTouchEnd={(event) => { if (startX.current === null) return; const dx = (event.changedTouches[0]?.clientX ?? startX.current) - startX.current; if (Math.abs(dx) > 45) go(slide + (dx < 0 ? 1 : -1)); startX.current = null; }}>
       <nav className="deck-toolbar" aria-label="Presentation controls">
