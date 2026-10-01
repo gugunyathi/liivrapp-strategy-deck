@@ -19,7 +19,15 @@ import {
   WalletCards,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import heroImage from "@/assets/liivrr-network.jpg";
 import logo from "@/assets/liivrr-logo.svg";
 
@@ -519,6 +527,8 @@ const slides: Array<() => ReactNode> = [
 function Presentation() {
   const [slide, setSlide] = useState(0);
   const [gridOpen, setGridOpen] = useState(false);
+  const [scale, setScale] = useState(0.5);
+  const stageRef = useRef<HTMLDivElement>(null);
   const startX = useRef<number | null>(null);
   const go = useCallback((next: number) => {
     const value = Math.max(0, Math.min(TOTAL_SLIDES - 1, next));
@@ -544,6 +554,19 @@ function Presentation() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [go, slide]);
+
+  useLayoutEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const updateScale = () => {
+      const { width, height } = stage.getBoundingClientRect();
+      setScale(Math.max(0.01, Math.min((width - 24) / 1920, (height - 24) / 1080)));
+    };
+    updateScale();
+    const observer = new ResizeObserver(updateScale);
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, []);
 
   const Slide = slides[slide] ?? slides[0];
   if (!Slide) return null;
@@ -594,8 +617,11 @@ function Presentation() {
           </a>
         </div>
       </nav>
-      <div className="stage">
-        <div className="slide-wrapper">
+      <div className="stage" ref={stageRef}>
+        <div
+          className="slide-wrapper"
+          style={{ "--slide-scale": scale } as CSSProperties}
+        >
           <Slide />
         </div>
       </div>
